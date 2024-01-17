@@ -40,6 +40,7 @@ from .const import (
     IntervalModes,
     CONF_EARLIEST_START_TIME,
     CONF_LATEST_END_TIME,
+    CONF_DURATION_ENTITY_ID,
     CONF_DURATION,
     CONF_PRICE_MODE,
     CONF_INTERVAL_MODE,
@@ -98,7 +99,7 @@ async def async_setup_entry(
                 entity_id=entity_id,
                 earliest_start_time=config_entry.options[CONF_EARLIEST_START_TIME],
                 latest_end_time=config_entry.options[CONF_LATEST_END_TIME],
-                duration=config_entry.options[CONF_DURATION],
+                duration_entity_id=config_entry.options[CONF_DURATION_ENTITY_ID],
                 interval_mode=config_entry.options[CONF_INTERVAL_MODE],
                 price_mode=config_entry.options[CONF_PRICE_MODE],
                 device_info=device_info,
@@ -120,7 +121,7 @@ class BinarySensor(BinarySensorEntity):
         entity_id: str,
         earliest_start_time: time,
         latest_end_time: time,
-        duration: timedelta,
+        duration_entity_id: str,
         interval_mode: str,
         price_mode: str,
         device_info: DeviceInfo | None = None,
@@ -134,7 +135,8 @@ class BinarySensor(BinarySensorEntity):
         self._entity_id = entity_id
         self._earliest_start_time = cv.time(earliest_start_time)
         self._latest_end_time = cv.time(latest_end_time)
-        self._duration = cv.time_period_dict(duration)
+        self._duration_entity_id = duration_entity_id
+        self._duration = cv.time_period_dict({"hours": 1})
         self._price_mode = price_mode
         self._interval_mode = interval_mode
 
@@ -165,6 +167,18 @@ class BinarySensor(BinarySensorEntity):
                 _LOGGER.warning(f"Can't get attributes of {self._entity_id}")
                 return
 
+            self._duration = None
+
+            if (new_duration_state := hass.states.get(self._duration_entity_id)) is None:
+                # _LOGGER.warning(f"Can't get states of {self._duration_entity_id}")
+                return
+
+            try:
+                self._duration = cv.time_period_dict({"seconds": float(new_duration_state.state)})
+            except (ValueError, TypeError):
+                _LOGGER.warning(f"Can't get attributes of {self._duration_entity_id} - state {new_duration_state.state}")
+                return
+
             self._update_state()
 
         @callback
@@ -177,7 +191,7 @@ class BinarySensor(BinarySensorEntity):
 
         self.async_on_remove(
             async_track_state_change_event(
-                hass, [entity_id], async_price_sensor_state_listener
+                hass, [entity_id, duration_entity_id], async_price_sensor_state_listener
             )
         )
 
@@ -204,6 +218,7 @@ class BinarySensor(BinarySensorEntity):
             ATTR_ENTITY_ID: self._entity_id,
             CONF_EARLIEST_START_TIME: self._earliest_start_time,
             CONF_LATEST_END_TIME: self._latest_end_time,
+            CONF_DURATION_ENTITY_ID: str(self._duration_entity_id),
             CONF_DURATION: str(self._duration),
             CONF_PRICE_MODE: self._price_mode,
             CONF_INTERVAL_MODE: self._interval_mode,

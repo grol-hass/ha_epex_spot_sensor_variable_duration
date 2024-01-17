@@ -7,6 +7,7 @@
           "entity_id": "Price Input Sensor",
           "earliest_start_time": "Earliest Start Time",
           "latest_end_time": "Latest End Time",
+          "duration_entity_id": "Duration Input Number",
           "duration": "Duration",
           "interval_mode": "Interval Mode",
           "price_mode": "Price Mode"
@@ -14,6 +15,7 @@
         "data_description": {
           "earliest_start_time": "Earliest time to start the appliance.",
           "latest_end_time": "Latest time to end the appliance. Set it to same value as earliest start time to cover 24h. If set to smaller value than earliest start time, it automatically refers to following day.",
+          "duration_entity_id": "Required duration to complete the appliance - read from an input_number entity.",
           "duration": "Required duration to complete the appliance.",
           "interval_mode": "Does the appliance need a single contigous interval or can it be splitted into multiple intervals."
         },
@@ -28,6 +30,7 @@
         "data": {
           "earliest_start_time": "Earliest Start Time",
           "latest_end_time": "Latest End Time",
+          "duration_entity_id": "Duration Input Number",
           "duration": "Duration",
           "interval_mode": "Interval Mode",
           "price_mode": "Price Mode"
@@ -35,6 +38,7 @@
         "data_description": {
           "earliest_start_time": "Earliest time to start the appliance.",
           "latest_end_time": "Latest time to end the appliance. Set it to same value as earliest start time to cover 24h. If set to smaller value than earliest start time, it automatically refers to following day.",
+          "duration_entity_id": "Required duration to complete the appliance - read from an input_number entity.",
           "duration": "Required duration to complete the appliance.",
           "interval_mode": "Does the appliance need a single contigous interval or can it be splitted into multiple intervals."
         }
