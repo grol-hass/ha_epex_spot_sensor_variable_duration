@@ -75,6 +75,13 @@ def calc_intervals_for_intermittent(
         if active_time + active_duration_in_this_segment > duration:
             # we don't need the full active_duration_in_this_segment
             active_duration_in_this_segment = duration - active_time
+            
+            # check if the intervals already contain the segment following in time
+            # to align the interval start to the end to avoid an unnecesary interruption
+            for count, iv in enumerate(intervals):
+                if iv.start_time == interval_end_time:
+                  interval_start_time = interval_end_time - active_duration_in_this_segment
+                  break
 
         price = (
             mp.price
@@ -95,6 +102,8 @@ def calc_intervals_for_intermittent(
 
         if active_time == duration:
             break
+      
+
 
     return intervals
 
