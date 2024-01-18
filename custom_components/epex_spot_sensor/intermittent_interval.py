@@ -78,7 +78,7 @@ def calc_intervals_for_intermittent(
             
             # check if the intervals already contain the segment following in time
             # to align the interval start to the end to avoid an unnecesary interruption
-            for count, iv in enumerate(intervals):
+            for iv in enumerate(intervals):
                 if iv.start_time == interval_end_time:
                   interval_start_time = interval_end_time - active_duration_in_this_segment
                   break
